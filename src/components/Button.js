@@ -5,10 +5,9 @@ import {TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 
 
 
-
-const Button = () => {
+const Button = ({handleClick}) => {
   return (
-   <TouchableOpacity style={styles.container}>
+   <TouchableOpacity onPress={handleClick} style={styles.container}>
     <Text style={styles.buttonText} >Proceed</Text>
    </TouchableOpacity>
   )

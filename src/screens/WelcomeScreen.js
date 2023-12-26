@@ -4,11 +4,15 @@ import { SafeAreaView, StyleSheet, Text, Image, View } from 'react-native';
 import Button from '../components/Button';
 import ImageViewer from '../components/ImageViewer';
 
+import { Stack, useRouter } from 'expo-router'
+
+
 
 
 const PlaceholderImage = require('../../assets/images/bot.png');
 
 export default function Welcome() {
+  const router = useRouter()
 
   return (
     <SafeAreaView style={styles.container}>
@@ -19,7 +23,11 @@ export default function Welcome() {
 
         <ImageViewer image={PlaceholderImage}/>
 
-       <Button />
+       <Button 
+            handleClick={() => 
+              {router.push(`/home/`)}
+            }
+       />
 
       <StatusBar style="auto" />
     </SafeAreaView>

@@ -28,8 +28,7 @@ const styles = StyleSheet.create({
 },
 image: {
     width: "100%",
-    textAlign: 'center',
-   
+    textAlign: 'center',   
     height: '240px',
   },
 });
