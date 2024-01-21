@@ -1,6 +1,7 @@
 import {SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableWithoutFeedback, TouchableOpacity, Pressable } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Features from '../components/Features';
+import Voice from '@react-native-voice/voice';
 // import { ScrollView } from 'react-native-gesture-handler';
 
 import {  dummyMessages } from '../constants';
@@ -8,107 +9,212 @@ import {  dummyMessages } from '../constants';
 
 const PlaceholderImage = require('../../assets/images/bot.png');
 
-const [messages, setMessages] = useState(dummyMessages)
-const [recording, setRecording] = useState(true)
-const [isLoading, setIsLoading] = useState(false)
+
+
+
+
 
 const HomeScreen = () => {
-  return (
-    <SafeAreaView style={styles.container} >
-        <View style={styles.imageContainer}>
-            <Image  style={styles.imageStyle} source={PlaceholderImage} />
-        </View>
-        {messages.length > 0 ? (
-            <View style={styles.chatContainer} >
-                <Text style={styles.assistantHeader} >Assistant</Text>
+    const [messages, setMessages] = useState(dummyMessages)
+    const [recording, setRecording] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [stopRecording, setStopRecording] = useState(false)
+    
+    function SpeechStartHandler (e){
+            console.log("Speech start handler")
+    }
+    function SpeechEndHandler (e){
+            console.log("Speech end handler")
+    }
+    function SpeechResultsHandler (e){
+            console.log("Voice prompt - ", e)
+    }
+    function SpeechErrorHandler (e){
+            console.log("Speech error handler - ", e)
+    }
 
-                <View style={styles.chatBox} >
-                `  <ScrollView  
-                    showsVerticalScrollIndicator={false}
-                    style={styles.scrollView} >
-                            {messages.map((message, index)=>{
-                            if(message.role === "assistant"){
-                                    if(message.content.includes("https")){
-                                        return(
+
+
+
+        const startRecording = async ()=>{
+            setRecording(true)
+             await Voice.start("en-GB") 
+            // try{
+            //     await Voice.start("en-US") 
+            // }catch(error){
+            //     console.log("Error ", error)
+            // }
+}
+
+            const stopRecordingVoice = async ()=>{
+                try{
+                    await Voice.stop() 
+                    setRecording(false)
+                }catch(error){
+                    console.log("Error ", error)
+                }
+            }
+
+
+
+            function clearMessage (){
+                setMessages([])
+                console.log(messages)
+            }
+
+                function stopSpeaking (){
+                    setRecording(false)
+                }
+
+
+
+            useEffect(()=>{
+                Voice.onSpeechStart = SpeechStartHandler;
+                Voice.onSpeechEnd = SpeechEndHandler;
+                Voice.onSpeechResults = SpeechResultsHandler;
+                Voice.onSpeechError = SpeechErrorHandler
+
+                    return ()=>{
+                        Voice.destroy().then(Voice.removeAllListeners)
+                    }
+            }, [])
+  
+        return (
+            <SafeAreaView style={styles.container} >
+
+                <View style={styles.imageContainer}>
+                    <Image  style={styles.imageStyle} source={PlaceholderImage} />
+                </View>
+
+                <Text style={styles.assistantHeader} >{messages? "Assistant" : null }</Text>
+                
+                {messages.length > 0 ? (
+                    <View
+                     style={styles.chatContainer}
+                    >
+
+                        <ScrollView  
+                            showsVerticalScrollIndicator={false}
+                            style={styles.chatDisplay} 
+                            
+                        >
+                                {
+                                    messages.map((message, index)=>{
+                                    if(message.role === "assistant"){
+                                            if(message.content.includes("https")){
+                                                return(
+                                                    <View 
+                                                        style={styles.imageChatContainer}
+                                                        key={index} >
+                                                            <Image 
+                                                            source= {{uri: message.content}} 
+                                                            style={styles.imageStyle}
+                                                                resizeMode="contain"
+                                                                />
+                                                    </View>
+                                                    )
+                                            }else{
+                                                return(
+                                                    <View 
+                                                    style={styles.assistantContainer}
+                                                    key={index}>
+                                                        < Text>{message.content}</Text>
+                                                    </View>
+                                                )   
+                                            }
+                                        }
+                                    return(
                                             <View 
-                                            style={styles.imageChatContainer}
-                                            key={index} >
-                                                <Image 
-                                                source= {{uri: message.content}} 
-                                                style={styles.imageStyle}
-                                                    resizeMode="contain"
-                                                    />
-                                            </View>
-                                            )
-                                    }else{
-                                        return(
-                                            <View 
-                                            style={styles.assistantContainer}
+                                            style={styles.userContainer}
                                             key={index}>
                                                 < Text>{message.content}</Text>
                                             </View>
-                                        )   
-                                    }
-                            }
-                                return(
-                                    <View 
-                                    style={styles.userContainer}
-                                    key={index}>
-                                        < Text>{message.content}</Text>
-                                    </View>
-                                )
-                            })}
-                    </ScrollView>
-                </View>
-
-                    <View  style={styles.buttonContainer} >  
-                                    {  
-                                    isLoading? (
-                                        
-                                       <TouchableWithoutFeedback>
-                                                <Image 
-                                                source={require('../../assets/images/loading.gif')} 
-                                                style={styles.imageStyle}
-                                                />
-                                    </TouchableWithoutFeedback>
-                                        
-                                        ):
-                                        recording?(
-                                                <TouchableWithoutFeedback>
-                                                    <Image 
-                                                    source={require('../../assets/images/voiceLoading.gif')} 
-                                                    style={styles.imageStyle}
-                                                    />
-                                                </TouchableWithoutFeedback>
-                                            
-                                            ):(
-                                                
-                                                <TouchableWithoutFeedback>
-                                                    <Image 
-                                                    source={require('../../assets/images/recordingIcon.png')} 
-                                                    style={styles.imageStyle}
-                                                    />
-                                             </TouchableWithoutFeedback>
-                                        
                                         )
-                                    }
-                    </View>
-            </View>
-        ): <Features />}
-    </SafeAreaView>
-  )
-}
+                                    })
+                                }
+
+                            </ScrollView>
+                        
+
+                    
+                            <View  style={styles.btnGroup} >  
+
+                                        {
+                                                recording? (
+                                                    
+                                                    <Pressable onPress={stopSpeaking} style={styles.sideBtncontainer}>
+                                                        <Text style={styles.buttonText} >Stop</Text>
+                                                    </Pressable>
+                                                ): null
+                                            }
+
+                                        {  
+                                            isLoading? (
+                                                
+                                            <Pressable style={styles.btncontainer} >
+                                                        <Image 
+                                                        source={require('../../assets/images/loading.gif')} 
+                                                        style={styles.btnStyle}
+                                                        />
+                                            </Pressable>
+                                                
+                                                ):
+                                                recording?(
+                                                        <Pressable onPress={stopRecordingVoice} style={styles.btncontainer} >
+                                                            <Image 
+                                                            source={require('../../assets/images/voiceLoading.gif')} 
+                                                            style={styles.btnStyle}
+                                                            />
+                                                        </Pressable>
+                                                    
+                                                    ):(
+                                                        
+                                                        <Pressable onPress={startRecording} style={styles.btncontainer} >
+                                                            <Image 
+                                                            source={require('../../assets/images/recordingIcon.png')} 
+                                                            style={styles.btnStyle}
+                                                            />
+                                                        </Pressable>
+                                                
+                                                )
+                                        }
+
+
+                                        {
+                                            messages? (
+                                                
+                                                <TouchableOpacity onPress={clearMessage} style={styles.sideBtncontainer}>
+                                                    <Text style={styles.buttonText} >Clear</Text>
+                                                </TouchableOpacity>
+                                            ): null
+                                        }
+
+                            </View>
+
+                            
+                        </View>
+                
+                ): <Features />
+                
+                }
+
+            </SafeAreaView>
+        )
+        }
 
 export default HomeScreen
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width: '100%',
+
+       
     
         // justifyContent: 'flex-end', 
         alignItems: 'center', 
         backgroundColor: 'white',
-        gap: '16px'
+        // gap: '16px'
       },
     imageContainer: {
         width: 140,
@@ -129,62 +235,95 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: "16px",
       },
+
+
+
+
+    // chatDisplay
+
+       chatContainer: {
       
-      chatContainer: {
-         flex: 1,
-          width: "85%",
-        //   height: '60%',
-         
-        },
-  
-      chatBox: {
-         flex: 1,
-          width: "100%",
-         padding: "16px",
-          borderRadius: 10,
-          backgroundColor: "#CCCCCC"
-        },
+        height: '60%',
+        width: '80%',
+        
+      },
+
+       chatDisplay: {
+            height: "80%",
+            width: "100%",
+            backgroundColor: "#CCCCCC",
+            padding: '16px',
+            
+        
+      },
 
 
+      // chatDisplay_scrollView
 
-      assistantContainer: {
-        flex: 1,
-          backgroundColor: "#ffffff",
-          padding: "8px",
-          borderRadius: "8px",
-          marginBottom: "16px",
-          width: "60%",
-          borderTopLeftRadius: 0,
-          
-          
-        },
-      userContainer: {
-          backgroundColor: "#90EE90",
-          alignSelf: "flex-end",
-          padding: "8px",
-          borderRadius: "8px",
-          marginBottom: "16px",
-          width: "60%",
-          borderTopRightRadius: 0,
-        },
-        imageChatContainer: {
-            width: "200px",
+      imageChatContainer: {
             height: "200px",
-            padding: "4px",
-            backgroundColor: "#A0FFA0",
+            width: "200px",
+            backgroundColor: "#90EE90",
+            padding: '8px', 
+            marginBottom: "8px",
+            borderTopLeftRadius: "0px",
+        
+      },
+      assistantContainer: {
+            // height: "70%",
+            width: "70%",
+            backgroundColor: "#90EE90",
+            padding: '8px', 
+            marginBottom: "8px",
             borderRadius: "8px",
-        },
-        scrollView: {
-            height: "70%",
-        },
+            borderTopLeftRadius: "0px",
+           
+        
+      },
+      userContainer: {
+            // height: "70%",
+            width: "70%",
+            backgroundColor: "white",
+            padding: '8px', 
+            marginBottom: "8px",
+            alignSelf: 'flex-end', 
+            borderRadius: "8px",
+            borderTopRightRadius: "0px",
+        
+      },
+      
 
-        buttonContainer: {
-            alignSelf: "center",
-            width: "100px",
-            height: "100px",
-           
-           
-        },
+
+    // Buttons
+
+    btnGroup: {
+        flex: 1,
+        marginTop: '16px',
+        flexDirection: "row", 
+        justifyContent: 'space-between', 
+      },
+      
+     sideBtncontainer: {
+        //   width: '100%',
+        height: '60%',
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        paddingHorizontal: '8px',
+       
+        borderWidth: 2,
+        borderRadius: '8px',
+        
+
+      },
+      
+     
+      btnStyle: {
+        width: '100px',
+        height: '100px',
+        resizeMode: 'contain',
+      },
+      
+     
         
   
 })

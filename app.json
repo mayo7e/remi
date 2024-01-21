@@ -5,9 +5,21 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "@react-native-voice/voice"
     ],
     "name": "remi-talk",
-    "slug": "remi-talk"
+    "slug": "remi-talk",
+    "android": {
+      "package": "com.anonymous.remitalk"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "8a51da56-16f6-4c16-a05b-492c2e879bd5"
+      }
+    }
   }
 }

@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     marginVertical:"auto",
     marginHorizontal:"auto",
     color:"white",
-    fontSize: "18px",
+    fontSize: 18,
   
    
   },

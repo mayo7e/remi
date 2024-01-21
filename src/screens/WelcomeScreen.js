@@ -18,7 +18,7 @@ export default function Welcome() {
     <SafeAreaView style={styles.container}>
         <View style={styles.textContainer} >
             <Text style={styles.welcomeText} >Remi</Text>
-            <Text style={styles.subText}  > Your voice-led path to effortless productivity!!</Text>
+            <Text style={styles.subText}  > Your voice-led path to effortles productivity</Text>
         </View>
 
         <ImageViewer image={PlaceholderImage}/>
@@ -52,14 +52,14 @@ const styles = StyleSheet.create({
    
   },
   welcomeText: {
-    fontSize: "32px",
+    fontSize: 32,
     display: "flex",
     fontWeight: "500",
     justifyContent: 'center',
     
   },
   subText: {
-    fontSize: "16px",
+    fontSize: 16,
     display: "flex",
     justifyContent: 'center',
     textAlign: "center"
