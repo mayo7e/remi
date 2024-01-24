@@ -2,7 +2,7 @@ import {SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableWithou
 import React, { useState, useEffect } from 'react'
 import Features from '../components/Features';
 import Voice from '@react-native-voice/voice';
-// import { ScrollView } from 'react-native-gesture-handler';
+
 
 import {  dummyMessages } from '../constants';
 
@@ -15,191 +15,273 @@ const PlaceholderImage = require('../../assets/images/bot.png');
 
 
 const HomeScreen = () => {
-    const [messages, setMessages] = useState(dummyMessages)
+
     const [recording, setRecording] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const [stopRecording, setStopRecording] = useState(false)
-    
+    const [results, setResults] = useState("")
+
     function SpeechStartHandler (e){
-            console.log("Speech start handler")
+        console.log("Speech start handler")
+}
+        function SpeechEndHandler (e){
+            console.log("Speech stop handler")
     }
-    function SpeechEndHandler (e){
-            console.log("Speech end handler")
-    }
-    function SpeechResultsHandler (e){
-            console.log("Voice prompt - ", e)
-    }
-    function SpeechErrorHandler (e){
-            console.log("Speech error handler - ", e)
-    }
+            function SpeechResultsHandler (e){
+                console.log("Voice prompt", e)
+                setResults(e.value[0])
+        }
 
-
-
-
-        const startRecording = async ()=>{
-            setRecording(true)
-             await Voice.start("en-GB") 
-            // try{
-            //     await Voice.start("en-US") 
-            // }catch(error){
-            //     console.log("Error ", error)
-            // }
+const startRecording = async ()=>{
+        setRecording(true)
+        console.log("starting")
+        if(Voice){
+        try{
+            await Voice.start("en-GB") 
+        }catch(error){
+            console.log("Error ", error)
+        }
+    } 
 }
 
-            const stopRecordingVoice = async ()=>{
-                try{
-                    await Voice.stop() 
-                    setRecording(false)
-                }catch(error){
-                    console.log("Error ", error)
-                }
+        const stopRecording = async ()=>{
+            setRecording(false)
+            console.log("stoping")
+            if(Voice){
+            try{
+                await Voice.stop() 
+            }catch(error){
+                console.log("Error ", error)
             }
+        } 
+        }
+            console.log(results)
+
+useEffect(()=>{
+    Voice.onSpeechStart = SpeechStartHandler;
+    Voice.onSpeechEnd = SpeechEndHandler;
+    Voice.onSpeechResults = SpeechResultsHandler;
+
+                        return ()=>{
+                            Voice.destroy().then(Voice.removeAllListeners)
+                        }
+    }, [])
 
 
 
-            function clearMessage (){
-                setMessages([])
-                console.log(messages)
-            }
+        return(
 
-                function stopSpeaking (){
-                    setRecording(false)
-                }
-
-
-
-            useEffect(()=>{
-                Voice.onSpeechStart = SpeechStartHandler;
-                Voice.onSpeechEnd = SpeechEndHandler;
-                Voice.onSpeechResults = SpeechResultsHandler;
-                Voice.onSpeechError = SpeechErrorHandler
-
-                    return ()=>{
-                        Voice.destroy().then(Voice.removeAllListeners)
-                    }
-            }, [])
-  
-        return (
             <SafeAreaView style={styles.container} >
 
-                <View style={styles.imageContainer}>
-                    <Image  style={styles.imageStyle} source={PlaceholderImage} />
-                </View>
-
-                <Text style={styles.assistantHeader} >{messages? "Assistant" : null }</Text>
+            <View>
+               <Text>hi</Text>
                 
-                {messages.length > 0 ? (
-                    <View
-                     style={styles.chatContainer}
-                    >
+                <Pressable onPress={startRecording} >
+                 <View>
+                    <Text> Start Button </Text>
+                 </View>
+                </Pressable>
+                <Pressable onPress={stopRecording} >
+                 <View>
+                    <Text> Stop Button now</Text>
+                 </View>
+                </Pressable>
 
-                        <ScrollView  
-                            showsVerticalScrollIndicator={false}
-                            style={styles.chatDisplay} 
+                <Pressable  style={styles.btncontainer} >
+                            <Image 
+                            source={require('../../assets/images/recordingIcon.png')} 
+                            style={styles.btnStyle}
+                            />
+                    </Pressable>
+
+            </View>
+
+        </SafeAreaView>
+        )
+//     const [messages, setMessages] = useState(dummyMessages)
+//     const [recording, setRecording] = useState(false)
+//     const [isLoading, setIsLoading] = useState(false)
+//     const [stopRecording, setStopRecording] = useState(false)
+    
+//     function SpeechStartHandler (e){
+//             console.log("Speech start handler")
+//     }
+//     function SpeechEndHandler (e){
+//             console.log("Speech end handler")
+//     }
+//     function SpeechResultsHandler (e){
+//             console.log("Voice prompt - ", e)
+//     }
+//     function SpeechErrorHandler (e){
+//             console.log("Speech error handler - ", e)
+//     }
+
+
+
+
+//         const startRecording = async ()=>{
+//             setRecording(true)
+//             if(Voice){
+//             try{
+//                 await Voice.start("en-US") 
+//             }catch(error){
+//                 console.log("Error ", error)
+//             }
+//         }
+// }
+
+//             const stopRecordingVoice = async ()=>{
+//                 try{
+//                     await Voice.stop() 
+//                     setRecording(false)
+//                 }catch(error){
+//                     console.log("Error ", error)
+//                 }
+//             }
+
+
+
+//             function clearMessage (){
+//                 setMessages([])
+//                 console.log(messages)
+//             }
+
+//                 function stopSpeaking (){
+//                     setRecording(false)
+//                 }
+
+
+
+//             useEffect(()=>{
+//                 Voice.onSpeechStart = SpeechStartHandler;
+//                 Voice.onSpeechEnd = SpeechEndHandler;
+//                 Voice.onSpeechResults = SpeechResultsHandler;
+//                 Voice.onSpeechError = SpeechErrorHandler
+
+//                     return ()=>{
+//                         Voice.destroy().then(Voice.removeAllListeners)
+//                     }
+//             }, [])
+  
+//         return (
+//             <SafeAreaView style={styles.container} >
+
+//                 <View style={styles.imageContainer}>
+//                     <Image  style={styles.imageStyle} source={PlaceholderImage} />
+//                 </View>
+
+//                 <Text style={styles.assistantHeader} >{messages? "Assistant" : null }</Text>
+                
+//                 {messages.length > 0 ? (
+//                     <View
+//                      style={styles.chatContainer}
+//                     >
+
+//                         <ScrollView  
+//                             showsVerticalScrollIndicator={false}
+//                             style={styles.chatDisplay} 
                             
-                        >
-                                {
-                                    messages.map((message, index)=>{
-                                    if(message.role === "assistant"){
-                                            if(message.content.includes("https")){
-                                                return(
-                                                    <View 
-                                                        style={styles.imageChatContainer}
-                                                        key={index} >
-                                                            <Image 
-                                                            source= {{uri: message.content}} 
-                                                            style={styles.imageStyle}
-                                                                resizeMode="contain"
-                                                                />
-                                                    </View>
-                                                    )
-                                            }else{
-                                                return(
-                                                    <View 
-                                                    style={styles.assistantContainer}
-                                                    key={index}>
-                                                        < Text>{message.content}</Text>
-                                                    </View>
-                                                )   
-                                            }
-                                        }
-                                    return(
-                                            <View 
-                                            style={styles.userContainer}
-                                            key={index}>
-                                                < Text>{message.content}</Text>
-                                            </View>
-                                        )
-                                    })
-                                }
+//                         >
+//                                 {
+//                                     messages.map((message, index)=>{
+//                                     if(message.role === "assistant"){
+//                                             if(message.content.includes("https")){
+//                                                 return(
+//                                                     <View 
+//                                                         style={styles.imageChatContainer}
+//                                                         key={index} >
+//                                                             <Image 
+//                                                             source= {{uri: message.content}} 
+//                                                             style={styles.imageStyle}
+//                                                                 resizeMode="contain"
+//                                                                 />
+//                                                     </View>
+//                                                     )
+//                                             }else{
+//                                                 return(
+//                                                     <View 
+//                                                     style={styles.assistantContainer}
+//                                                     key={index}>
+//                                                         < Text>{message.content}</Text>
+//                                                     </View>
+//                                                 )   
+//                                             }
+//                                         }
+//                                     return(
+//                                             <View 
+//                                             style={styles.userContainer}
+//                                             key={index}>
+//                                                 < Text>{message.content}</Text>
+//                                             </View>
+//                                         )
+//                                     })
+//                                 }
 
-                            </ScrollView>
+//                             </ScrollView>
                         
 
                     
-                            <View  style={styles.btnGroup} >  
+//                             <View  style={styles.btnGroup} >  
 
-                                        {
-                                                recording? (
+//                                         {
+//                                                 recording? (
                                                     
-                                                    <Pressable onPress={stopSpeaking} style={styles.sideBtncontainer}>
-                                                        <Text style={styles.buttonText} >Stop</Text>
-                                                    </Pressable>
-                                                ): null
-                                            }
+//                                                     <Pressable onPress={stopSpeaking} style={styles.sideBtncontainer}>
+//                                                         <Text style={styles.buttonText} >Stop</Text>
+//                                                     </Pressable>
+//                                                 ): null
+//                                             }
 
-                                        {  
-                                            isLoading? (
+//                                         {  
+//                                             isLoading? (
                                                 
-                                            <Pressable style={styles.btncontainer} >
-                                                        <Image 
-                                                        source={require('../../assets/images/loading.gif')} 
-                                                        style={styles.btnStyle}
-                                                        />
-                                            </Pressable>
+//                                             <Pressable style={styles.btncontainer} >
+//                                                         <Image 
+//                                                         source={require('../../assets/images/loading.gif')} 
+//                                                         style={styles.btnStyle}
+//                                                         />
+//                                             </Pressable>
                                                 
-                                                ):
-                                                recording?(
-                                                        <Pressable onPress={stopRecordingVoice} style={styles.btncontainer} >
-                                                            <Image 
-                                                            source={require('../../assets/images/voiceLoading.gif')} 
-                                                            style={styles.btnStyle}
-                                                            />
-                                                        </Pressable>
+//                                                 ):
+//                                                 recording?(
+//                                                         <Pressable onPress={stopRecordingVoice} style={styles.btncontainer} >
+//                                                             <Image 
+//                                                             source={require('../../assets/images/voiceLoading.gif')} 
+//                                                             style={styles.btnStyle}
+//                                                             />
+//                                                         </Pressable>
                                                     
-                                                    ):(
+//                                                     ):(
                                                         
-                                                        <Pressable onPress={startRecording} style={styles.btncontainer} >
-                                                            <Image 
-                                                            source={require('../../assets/images/recordingIcon.png')} 
-                                                            style={styles.btnStyle}
-                                                            />
-                                                        </Pressable>
+//                                                         <Pressable onPress={startRecording} style={styles.btncontainer} >
+//                                                             <Image 
+//                                                             source={require('../../assets/images/recordingIcon.png')} 
+//                                                             style={styles.btnStyle}
+//                                                             />
+//                                                         </Pressable>
                                                 
-                                                )
-                                        }
+//                                                 )
+//                                         }
 
 
-                                        {
-                                            messages? (
+//                                         {
+//                                             messages? (
                                                 
-                                                <TouchableOpacity onPress={clearMessage} style={styles.sideBtncontainer}>
-                                                    <Text style={styles.buttonText} >Clear</Text>
-                                                </TouchableOpacity>
-                                            ): null
-                                        }
+//                                                 <TouchableOpacity onPress={clearMessage} style={styles.sideBtncontainer}>
+//                                                     <Text style={styles.buttonText} >Clear</Text>
+//                                                 </TouchableOpacity>
+//                                             ): null
+//                                         }
 
-                            </View>
+//                             </View>
 
                             
-                        </View>
+//                         </View>
                 
-                ): <Features />
+//                 ): <Features />
                 
-                }
+//                 }
 
-            </SafeAreaView>
-        )
+//             </SafeAreaView>
+//         )
         }
 
 export default HomeScreen
@@ -211,7 +293,7 @@ const styles = StyleSheet.create({
 
        
     
-        // justifyContent: 'flex-end', 
+        justifyContent: 'center', 
         alignItems: 'center', 
         backgroundColor: 'white',
         // gap: '16px'
