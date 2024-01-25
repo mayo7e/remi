@@ -1,4 +1,4 @@
-
+export const apiKey = "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"
 
 export const dummyMessages = [
     {

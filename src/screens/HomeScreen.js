@@ -5,6 +5,7 @@ import Voice from '@react-native-voice/voice';
 
 
 import {  dummyMessages } from '../constants';
+import { apiCall } from '../api/OpenAi';
 
 
 const PlaceholderImage = require('../../assets/images/bot.png');
@@ -15,6 +16,10 @@ const PlaceholderImage = require('../../assets/images/bot.png');
 
 
 const HomeScreen = () => {
+
+    useEffect(()=>{
+        apiCall("what is amapiano?")
+    }, [])
 
     const [recording, setRecording] = useState(false)
     const [results, setResults] = useState("")
