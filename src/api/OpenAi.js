@@ -6,7 +6,7 @@ const { apiKey } = require("../constants");
 
 
 const client = axios.create({
-    timeout: 1000,
+    timeout: 3000,
     headers: {
         "Authorization": "Bearer " +apiKey,
         "Content-Type": "application/json"

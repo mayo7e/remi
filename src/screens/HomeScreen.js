@@ -2,6 +2,7 @@ import {SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableWithou
 import React, { useState, useEffect } from 'react'
 import Features from '../components/Features';
 import Voice from '@react-native-voice/voice';
+import Tts from 'react-native-tts';
 
 
 import {  dummyMessages } from '../constants';
@@ -17,12 +18,15 @@ const PlaceholderImage = require('../../assets/images/bot.png');
 
 const HomeScreen = () => {
 
-    useEffect(()=>{
-        apiCall("what is amapiano?")
-    }, [])
+   
 
     const [recording, setRecording] = useState(false)
     const [results, setResults] = useState("")
+
+
+    const textToSpeech = ()=>{
+        Tts.speak('Hello, world!');
+    }
 
     function SpeechStartHandler (e){
         console.log("Speech start handler")
@@ -53,6 +57,7 @@ const startRecording = async ()=>{
             if(Voice){
             try{
                 await Voice.stop() 
+                textToSpeech()
             }catch(error){
                 console.log("Error ", error)
             }
@@ -64,6 +69,12 @@ useEffect(()=>{
     Voice.onSpeechStart = SpeechStartHandler;
     Voice.onSpeechEnd = SpeechEndHandler;
     Voice.onSpeechResults = SpeechResultsHandler;
+
+    // tts
+
+    Tts.addEventListener('tts-start', (event) => console.log("start", event));
+    Tts.addEventListener('tts-finish', (event) => console.log("finish", event));
+    Tts.addEventListener('tts-cancel', (event) => console.log("cancel", event));
 
                         return ()=>{
                             Voice.destroy().then(Voice.removeAllListeners)
