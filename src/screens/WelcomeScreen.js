@@ -3,16 +3,39 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet, Text, Image, View } from 'react-native';
 import Button from '../components/Button';
 import ImageViewer from '../components/ImageViewer';
+import axios from 'axios';
 
 import { Stack, useRouter } from 'expo-router'
+import { useEffect } from 'react';
 
 
 
 
 const PlaceholderImage = require('../../assets/images/bot.png');
+  
+ 
+  
 
 export default function Welcome() {
-  const router = useRouter()
+  const router = useRouter() 
+
+  useEffect(()=>{
+    const fetchData = async ()=>{
+      try{
+        const options={
+          method: "GET",
+          url: "http://192.168.10.101:5000/api"
+        }
+        const response = await axios.request(options)
+        console.log(response.data)
+      }catch(err){
+        console.log(err)
+
+      }}
+        fetchData()
+  }, [])
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -22,6 +45,7 @@ export default function Welcome() {
         </View>
 
         <ImageViewer image={PlaceholderImage}/>
+        <Text>us</Text>
 
        <Button 
             handleClick={() => 

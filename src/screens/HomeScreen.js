@@ -8,6 +8,7 @@ import Tts from 'react-native-tts';
 import {  dummyMessages } from '../constants';
 import { apiCall } from '../api/OpenAi';
 
+import { useTranslation } from "react-i18next";
 
 const PlaceholderImage = require('../../assets/images/bot.png');
 
@@ -18,7 +19,7 @@ const PlaceholderImage = require('../../assets/images/bot.png');
 
 const HomeScreen = () => {
 
-   
+const [t, i18n] = useTranslation()   
 
     const [recording, setRecording] = useState(false)
     const [results, setResults] = useState("")
@@ -92,7 +93,7 @@ useEffect(()=>{
                 
                 <Pressable onPress={startRecording} >
                  <View>
-                    <Text> Start Button </Text>
+                    <Text>{t("Start Button")}</Text>
                  </View>
                 </Pressable>
                 <Pressable onPress={stopRecording} >

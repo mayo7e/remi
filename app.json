@@ -6,7 +6,8 @@
     },
     "plugins": [
       "expo-router",
-      "@react-native-voice/voice"
+      "@react-native-voice/voice",
+      "expo-localization"
     ],
     "name": "remi-talk",
     "slug": "remi-talk",
